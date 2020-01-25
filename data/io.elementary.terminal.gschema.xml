@@ -89,6 +89,11 @@
       <summary>Defined whether to use dark stylesheet from Gtk</summary>
       <description>Switches between dark and light style</description>
     </key>
+    <key name="alt-toggles-links" type="b">
+      <default>false</default>
+      <summary>Defines whether Alt is required to activate links</summary>
+      <description>When true, links are inactive unless Alt is held. When false, links are always active.</description>
+    </key>
 
     <key name="foreground" type="s">
       <default>"#a5a5a5"</default>

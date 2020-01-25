@@ -31,6 +31,7 @@ namespace Terminal {
         static int terminal_id_counter = 0;
         private bool init_complete;
         public bool resized {get; set;}
+        public bool links_enabled = false;
 
         GLib.Pid child_pid;
         private MainWindow _window;
@@ -229,9 +230,7 @@ namespace Terminal {
 
             Gtk.drag_dest_set (this, Gtk.DestDefaults.ALL, targets, Gdk.DragAction.COPY);
 
-            /* Make Links Clickable */
             this.drag_data_received.connect (drag_received);
-            this.clickable (REGEX_STRINGS);
 
             Terminal.Application.saved_state.bind ("zoom", this, "font-scale", GLib.SettingsBindFlags.DEFAULT);
         }
@@ -398,7 +397,17 @@ namespace Terminal {
             return height;
         }
 
-        private void clickable (string[] str) {
+        public void enable_links () {
+            links_enabled = true;
+            this.make_clickable (REGEX_STRINGS);
+        }
+
+        public void disable_links () {
+            links_enabled = false;
+            this.clear_clickable ();
+        }
+
+        private void make_clickable (string[] str) {
             foreach (string exp in str) {
                 try {
                     var regex = new GLib.Regex (exp);
@@ -411,7 +420,15 @@ namespace Terminal {
             }
         }
 
+        private void clear_clickable () {
+            this.match_remove_all ();
+        }
+
         private string? get_link (Gdk.Event event) {
+            if (!links_enabled) {
+                return null;
+            }
+
             return this.match_check_event (event, null);
         }
 

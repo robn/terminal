@@ -572,6 +572,12 @@ namespace Terminal {
 
             key_press_event.connect ((e) => {
                 if (e.is_modifier == 1) {
+                    if ((e.keyval == Gdk.Key.Alt_R || e.keyval == Gdk.Key.Alt_L) &&
+                        Application.settings.get_boolean ("alt-toggles-links")) {
+
+                        current_terminal.enable_links ();
+                    }
+
                     return false;
                 }
 
@@ -684,6 +690,18 @@ namespace Terminal {
 
                     if (match_keycode (Gdk.Key.c, keycode)) { /* Alt-c */
                         update_copy_output_sensitive ();
+                    }
+                }
+
+                return false;
+            });
+
+            key_release_event.connect ((e) => {
+                if (e.is_modifier == 1) {
+                    if ((e.keyval == Gdk.Key.Alt_R || e.keyval == Gdk.Key.Alt_L) &&
+                        Application.settings.get_boolean ("alt-toggles-links")) {
+
+                        current_terminal.disable_links ();
                     }
                 }
 
@@ -1011,6 +1029,10 @@ namespace Terminal {
             });
 
             t.set_font (term_font);
+
+            if (!Application.settings.get_boolean ("alt-toggles-links")) {
+                t.enable_links();
+            }
 
             int minimum_width = t.calculate_width (80) / 2;
             int minimum_height = t.calculate_height (24) / 2;
